@@ -2,63 +2,64 @@ import Description from "./components/Description/Description";
 import Feedback from "./components/Feedback/Feedback";
 import Notification from "./components/Notification/Notification";
 import Options from "./components/Options/Options";
+import { useState, useEffect } from 'react';
 
-import { useState, useEffect } from "react";
 
-import resp from "./resp.json";
 
-const App = () => {
-  const [feedback, setFeedback] = useState(() => {
-    const savedFeedback = localStorage.getItem("feedback");
-    return savedFeedback
-      ? JSON.parse(savedFeedback)
-      : { good: 0, neutral: 0, bad: 0 };
-  });
+function App () {
 
-  const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
-  const positiveFeedback = Math.round((feedback.good / totalFeedback) * 100);
+const [feedback, setFeedback] = useState ({ good: 0, neutral: 0, bad: 0 });
 
-  const updateFeedback = (feedbackType) => {
+useEffect(() => {
+    const savedFeedback = JSON.parse(localStorage.getItem('feedback'));
+    if (savedFeedback) {
+      setFeedback(savedFeedback);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('feedback', JSON.stringify(feedback));
+  }, [feedback]);
+
+const updateFeedback = (feedbackType) => {
     setFeedback((prevFeedback) => ({
       ...prevFeedback,
       [feedbackType]: prevFeedback[feedbackType] + 1,
     }));
   };
 
-  const handleReset = () => {
+const feedbackReset = () => {
     setFeedback({ good: 0, neutral: 0, bad: 0 });
-  };
-
-  useEffect(() => {
-    localStorage.setItem("feedback", JSON.stringify(feedback));
-  }, [feedback]);
-
-  return (
-    <div>
-      <Description
-        name={"Sip Happens Café"}
-        text={
-          "Please leave your feedback about our service by selecting one of the options below."
-        }
-      />
-      <Options
-        totalFeedback={totalFeedback}
-        handleReset={handleReset}
-        updateFeedback={updateFeedback}
-        resp={resp}
-      />
-      {totalFeedback > 0 ? (
-        <Feedback
-          totalFeedback={totalFeedback}
-          positiveFeedback={positiveFeedback}
-          feedback={feedback}
-        />
-      ) : (
-        <Notification message="No feedback yet" />
-      )}
-    </div>
-  );
 };
 
-export default App;
+const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
 
+  const positiveFeedback = Math.round((feedback.good / totalFeedback) * 100);
+
+ return(
+<div>
+
+<Description/>
+
+<Options 
+updateFeedback={updateFeedback}
+feedbackReset={feedbackReset}
+ />
+
+{totalFeedback > 0 ? (
+  <Feedback
+    good={feedback.good}
+    neutral={feedback.neutral}
+    bad={feedback.bad}
+    totalFeedback={totalFeedback}
+    positiveFeedback={positiveFeedback}
+  />
+) : (
+  <Notification message={"No feedback yet"} />
+)}
+
+</div>
+ );
+}
+
+export default App;
