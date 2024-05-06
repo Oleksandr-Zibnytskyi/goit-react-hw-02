@@ -15,11 +15,15 @@ useEffect(() => {
     if (savedFeedback) {
       setFeedback(savedFeedback);
     }
+    return () => {
+    };
   }, []);
+
 
   useEffect(() => {
     localStorage.setItem('feedback', JSON.stringify(feedback));
   }, [feedback]);
+
 
 const updateFeedback = (feedbackType) => {
     setFeedback((prevFeedback) => ({
@@ -44,6 +48,7 @@ const totalFeedback = feedback.good + feedback.neutral + feedback.bad;
 <Options 
 updateFeedback={updateFeedback}
 feedbackReset={feedbackReset}
+totalFeedback={totalFeedback}
  />
 
 {totalFeedback > 0 ? (
