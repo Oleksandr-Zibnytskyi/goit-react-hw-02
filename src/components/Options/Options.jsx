@@ -12,5 +12,3 @@ const Options = ({ updateFeedback, feedbackReset, totalFeedback}) => {
     );
 };
 export default Options
-
-// {(feedback.good > 0 || feedback.neutral > 0 || feedback.bad > 0) && (<button onClick={resetFeedback}>Reset</button>)}
